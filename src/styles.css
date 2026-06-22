@@ -57,33 +57,33 @@
 :root {
   --radius: 3px;
 
-  /* Industrial graphite palette */
-  --background: oklch(0.18 0.005 240);
-  --foreground: oklch(0.92 0.005 240);
-  --surface: oklch(0.21 0.006 240);
-  --surface-2: oklch(0.235 0.006 240);
-  --surface-3: oklch(0.27 0.007 240);
+  /* Soft daylight palette */
+  --background: oklch(0.975 0.01 240);
+  --foreground: oklch(0.24 0.01 240);
+  --surface: oklch(0.99 0.003 240);
+  --surface-2: oklch(0.965 0.008 240);
+  --surface-3: oklch(0.93 0.01 240);
 
-  --card: oklch(0.21 0.006 240);
-  --card-foreground: oklch(0.92 0.005 240);
-  --popover: oklch(0.21 0.006 240);
-  --popover-foreground: oklch(0.92 0.005 240);
+  --card: oklch(0.99 0.003 240);
+  --card-foreground: oklch(0.24 0.01 240);
+  --popover: oklch(0.99 0.003 240);
+  --popover-foreground: oklch(0.24 0.01 240);
 
-  --primary: oklch(0.65 0.13 230);
-  --primary-foreground: oklch(0.15 0.005 240);
-  --secondary: oklch(0.27 0.007 240);
-  --secondary-foreground: oklch(0.92 0.005 240);
-  --muted: oklch(0.25 0.006 240);
-  --muted-foreground: oklch(0.62 0.01 240);
-  --accent: oklch(0.3 0.01 240);
-  --accent-foreground: oklch(0.95 0.005 240);
+  --primary: oklch(0.56 0.14 230);
+  --primary-foreground: oklch(0.98 0.01 240);
+  --secondary: oklch(0.95 0.01 240);
+  --secondary-foreground: oklch(0.24 0.01 240);
+  --muted: oklch(0.95 0.01 240);
+  --muted-foreground: oklch(0.52 0.01 240);
+  --accent: oklch(0.93 0.012 240);
+  --accent-foreground: oklch(0.24 0.01 240);
 
   --destructive: oklch(0.58 0.22 25);
   --destructive-foreground: oklch(0.98 0 0);
 
-  --border: oklch(0.3 0.007 240);
-  --border-strong: oklch(0.38 0.008 240);
-  --input: oklch(0.27 0.007 240);
+  --border: oklch(0.88 0.01 240);
+  --border-strong: oklch(0.8 0.012 240);
+  --input: oklch(0.92 0.01 240);
   --ring: oklch(0.55 0.12 230);
 
   /* Status semantic tokens */
@@ -104,14 +104,42 @@
 }
 
 .dark {
-  /* same — dark by default */
-  --background: oklch(0.18 0.005 240);
-  --foreground: oklch(0.92 0.005 240);
+  --background: oklch(0.16 0.006 240);
+  --foreground: oklch(0.94 0.004 240);
+  --surface: oklch(0.2 0.006 240);
+  --surface-2: oklch(0.235 0.006 240);
+  --surface-3: oklch(0.29 0.007 240);
+
+  --card: oklch(0.2 0.006 240);
+  --card-foreground: oklch(0.94 0.004 240);
+  --popover: oklch(0.2 0.006 240);
+  --popover-foreground: oklch(0.94 0.004 240);
+
+  --primary: oklch(0.68 0.12 230);
+  --primary-foreground: oklch(0.14 0.005 240);
+  --secondary: oklch(0.26 0.007 240);
+  --secondary-foreground: oklch(0.94 0.004 240);
+  --muted: oklch(0.24 0.006 240);
+  --muted-foreground: oklch(0.65 0.01 240);
+  --accent: oklch(0.29 0.01 240);
+  --accent-foreground: oklch(0.97 0.003 240);
+
+  --border: oklch(0.3 0.007 240);
+  --border-strong: oklch(0.4 0.008 240);
+  --input: oklch(0.27 0.007 240);
+  --ring: oklch(0.6 0.11 230);
 }
 
 @layer base {
   * {
     border-color: var(--color-border);
+  }
+  html {
+    color-scheme: light;
+  }
+  .dark html,
+  html.dark {
+    color-scheme: dark;
   }
   html, body, #root {
     background-color: var(--color-background);
@@ -121,21 +149,30 @@
     -webkit-font-smoothing: antialiased;
   }
   body {
-    font-size: 13px;
-    letter-spacing: -0.005em;
+    background-image:
+      radial-gradient(circle at top left, oklch(0.63 0.08 230 / 0.12), transparent 32%),
+      radial-gradient(circle at top right, oklch(0.74 0.08 80 / 0.08), transparent 28%),
+      linear-gradient(180deg, oklch(1 0 0 / 0.5), transparent 34%);
+    background-attachment: fixed;
+    font-size: 14px;
+    letter-spacing: -0.01em;
+    line-height: 1.45;
   }
-  ::selection { background: oklch(0.55 0.12 230 / 0.4); }
+  ::selection { background: oklch(0.55 0.12 230 / 0.22); }
 }
 
 @utility panel {
-  background-color: var(--color-surface);
+  background-color: color-mix(in oklab, var(--color-surface) 92%, white);
   border: 1px solid var(--color-border);
+  border-radius: 16px;
+  box-shadow: 0 1px 0 oklch(1 0 0 / 0.25), 0 14px 36px oklch(0.11 0.02 240 / 0.06);
+  overflow: hidden;
 }
 
 @utility panel-header {
   border-bottom: 1px solid var(--color-border);
-  padding: 10px 14px;
-  font-size: 11px;
+  padding: 12px 16px;
+  font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;

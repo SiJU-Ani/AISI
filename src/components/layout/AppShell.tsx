@@ -2,7 +2,7 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState, type ReactNode } from "react";
 import {
   Gauge, Map, Cpu, FileCheck2, MessageSquareWarning, Siren, ShieldCheck,
-  Bell, ChevronLeft, ChevronRight, Search, User2, Power
+  Bell, ChevronLeft, ChevronRight, Search, User2, Power, MoonStar, SunMedium
 } from "lucide-react";
 import { PLANTS } from "@/lib/mock-data";
 
@@ -20,6 +20,12 @@ export function AppShell({ children, title, subtitle }: { children: ReactNode; t
   const [collapsed, setCollapsed] = useState(false);
   const [plant, setPlant] = useState(PLANTS[0].id);
   const [clock, setClock] = useState("");
+  const [theme, setTheme] = useState<"light" | "dark">(() => {
+    if (typeof window === "undefined") return "light";
+    const stored = window.localStorage.getItem("sentinel-theme");
+    if (stored === "light" || stored === "dark") return stored;
+    return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  });
   const path = useRouterState({ select: s => s.location.pathname });
 
   useEffect(() => {
@@ -32,11 +38,17 @@ export function AppShell({ children, title, subtitle }: { children: ReactNode; t
     return () => clearInterval(id);
   }, []);
 
+  useEffect(() => {
+    const root = document.documentElement;
+    root.classList.toggle("dark", theme === "dark");
+    window.localStorage.setItem("sentinel-theme", theme);
+  }, [theme]);
+
   return (
     <div className="flex min-h-screen w-full bg-background text-foreground">
       {/* Sidebar */}
-      <aside className={`${collapsed ? "w-14" : "w-60"} shrink-0 border-r border-border bg-surface transition-[width] duration-150`}>
-        <div className="flex h-12 items-center gap-2 border-b border-border px-3">
+      <aside className={`${collapsed ? "w-16" : "w-64"} shrink-0 border-r border-border bg-surface/80 backdrop-blur-sm transition-[width] duration-150`}>
+        <div className="flex h-14 items-center gap-2 border-b border-border px-4">
           <div className="size-6 bg-primary/20 border border-primary/60 grid place-items-center">
             <div className="size-2 bg-primary" />
           </div>
@@ -55,10 +67,10 @@ export function AppShell({ children, title, subtitle }: { children: ReactNode; t
               <Link
                 key={item.to}
                 to={item.to}
-                className={`flex items-center gap-3 px-3 py-2 mx-1 text-[12.5px] border-l-2 ${
+                className={`flex items-center gap-3 rounded-lg px-3 py-2 mx-2 text-[12.5px] border-l-2 ${
                   active
-                    ? "border-primary bg-surface-2 text-foreground"
-                    : "border-transparent text-muted-foreground hover:text-foreground hover:bg-surface-2"
+                    ? "border-primary bg-surface-2 text-foreground shadow-sm"
+                    : "border-transparent text-muted-foreground hover:text-foreground hover:bg-surface-2/80"
                 }`}
               >
                 <Icon size={15} className="shrink-0" />
@@ -69,7 +81,7 @@ export function AppShell({ children, title, subtitle }: { children: ReactNode; t
         </nav>
         <button
           onClick={() => setCollapsed(c => !c)}
-          className="absolute bottom-3 left-3 size-7 grid place-items-center border border-border bg-surface-2 text-muted-foreground hover:text-foreground"
+          className="absolute bottom-4 left-4 size-7 grid place-items-center rounded-full border border-border bg-surface-2 text-muted-foreground shadow-sm hover:text-foreground"
           aria-label="Toggle sidebar"
         >
           {collapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
@@ -79,7 +91,7 @@ export function AppShell({ children, title, subtitle }: { children: ReactNode; t
       {/* Main column */}
       <div className="flex min-w-0 flex-1 flex-col">
         {/* Top command bar */}
-        <header className="flex h-12 items-center gap-3 border-b border-border bg-surface px-4">
+        <header className="flex min-h-14 items-center gap-3 border-b border-border bg-surface/85 px-5 backdrop-blur-sm">
           <div className="flex items-center gap-2">
             <span className="status-dot bg-critical animate-pulse" />
             <span className="mono text-[10px] uppercase tracking-[0.18em] text-critical">CRITICAL · 1 ZONE</span>
@@ -93,7 +105,7 @@ export function AppShell({ children, title, subtitle }: { children: ReactNode; t
             {PLANTS.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
           </select>
 
-          <div className="ml-2 hidden md:flex items-center gap-2 border border-border bg-surface-2 px-2 py-1 flex-1 max-w-md">
+          <div className="ml-2 hidden md:flex items-center gap-2 border border-border bg-surface-2/70 px-2.5 py-1 flex-1 max-w-md rounded-full">
             <Search size={13} className="text-muted-foreground" />
             <input
               placeholder="Search zones, permits, incidents…"
@@ -102,11 +114,19 @@ export function AppShell({ children, title, subtitle }: { children: ReactNode; t
             <kbd className="mono text-[10px] text-muted-foreground border border-border px-1">⌘K</kbd>
           </div>
 
-          <div className="ml-auto flex items-center gap-3">
+          <div className="ml-auto flex items-center gap-2.5">
             <div className="mono text-[11px] text-muted-foreground hidden lg:block">{clock}</div>
-            <button className="relative size-7 grid place-items-center border border-border bg-surface-2 hover:bg-surface-3">
+            <button className="relative size-8 grid place-items-center rounded-full border border-border bg-surface-2/70 hover:bg-surface-3" aria-label="Notifications">
               <Bell size={14} />
               <span className="absolute -top-1 -right-1 size-3 bg-critical text-[8px] text-critical-foreground grid place-items-center font-bold">9</span>
+            </button>
+            <button
+              onClick={() => setTheme(current => current === "dark" ? "light" : "dark")}
+              className="flex items-center gap-2 rounded-full border border-border bg-surface-2/70 px-3 py-1.5 text-[11px] font-medium text-foreground hover:bg-surface-3"
+              aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+            >
+              {theme === "dark" ? <SunMedium size={13} /> : <MoonStar size={13} />}
+              <span className="hidden sm:inline uppercase tracking-[0.16em] text-[10px]">{theme === "dark" ? "Light" : "Dark"}</span>
             </button>
             <div className="flex items-center gap-2 border border-border bg-surface-2 px-2 py-1">
               <div className="size-5 bg-primary/30 border border-primary/60 grid place-items-center">
@@ -124,7 +144,7 @@ export function AppShell({ children, title, subtitle }: { children: ReactNode; t
         </header>
 
         {/* Page header strip */}
-        <div className="flex items-center justify-between border-b border-border bg-background px-5 py-3">
+        <div className="flex items-center justify-between border-b border-border bg-background/75 px-6 py-4 backdrop-blur-sm">
           <div>
             <div className="mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
               {NAV.find(n => n.to === path)?.label ?? "Module"}
@@ -154,7 +174,7 @@ function Pill({ label, value, tone, pulse }: { label: string; value: string; ton
     muted: "text-muted-foreground border-border bg-surface-2",
   };
   return (
-    <div className={`flex items-center gap-2 border px-2 py-1 mono text-[10px] uppercase tracking-wider ${tones[tone]}`}>
+    <div className={`flex items-center gap-2 rounded-full border px-2.5 py-1 mono text-[10px] uppercase tracking-wider ${tones[tone]}`}>
       {pulse && <span className={`status-dot bg-current animate-pulse`} />}
       <span className="opacity-70">{label}</span>
       <span className="font-semibold">{value}</span>
