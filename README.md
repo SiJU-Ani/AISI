@@ -1,4 +1,4 @@
-# AISI - AI-Powered Compliance & Risk Management Platform
+# AISI - AI-Powered Gas Explosion Risk Monitoring Platform
 
 A full-stack, production-ready application built with **TanStack Start**, **React 18**, **Vite**, and **Supabase**. Implements a modern architecture with centralized configuration, AI service abstraction, and comprehensive compliance/risk management workflows.
 
