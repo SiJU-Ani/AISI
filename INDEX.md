@@ -26,9 +26,26 @@ AISI is a full-stack web application featuring compliance management, risk asses
 ```
 AISI/
 ├── src/
+│   ├── config/              # ⭐ Central Configuration (NEW)
+│   │   ├── index.ts         # Main config (APIs, timeouts, thresholds, feature flags)
+│   │   ├── ai.ts            # AI provider abstraction & settings
+│   │   └── prompts.ts       # Centralized prompt management
+│   │
+│   ├── services/            # ⭐ Service Layer (NEW)
+│   │   └── ai/
+│   │       ├── index.ts          # Main AI service interface
+│   │       ├── provider.ts       # Base provider interface
+│   │       ├── gemini.ts         # Gemini implementation
+│   │       ├── openrouter.ts     # OpenRouter implementation
+│   │       └── utils.ts          # Helper utilities
+│   │
 │   ├── components/          # React UI components
 │   │   ├── layout/
 │   │   │   └── AppShell.tsx     # Main app layout wrapper
+│   │   ├── examples/        # ⭐ Example components (NEW)
+│   │   │   ├── ComplianceAnalysisExample.tsx
+│   │   │   ├── RiskCalculationExample.tsx
+│   │   │   └── ConfigurationDisplayExample.tsx
 │   │   └── ui/              # Radix UI component library
 │   │       ├── accordion.tsx
 │   │       ├── alert.tsx
@@ -42,7 +59,7 @@ AISI/
 │   │       └── ... (25+ UI components)
 │   │
 │   ├── routes/              # TanStack Router file-based routing
-│   │   ├── api/             # ⭐ Backend API endpoints
+│   │   ├── api/             # Backend API endpoints
 │   │   │   ├── __index.tsx          # API root metadata
 │   │   │   ├── api.auth.tsx         # Authentication
 │   │   │   ├── api.compliance.tsx   # Compliance module
@@ -80,6 +97,7 @@ AISI/
 │   └── styles.css           # Global styles
 │
 ├── Configuration Files
+│   ├── .env.example         # ⭐ Environment template (NEW)
 │   ├── package.json         # Dependencies & scripts
 │   ├── tsconfig.json        # TypeScript config
 │   ├── vite.config.ts       # Vite build config
@@ -88,8 +106,12 @@ AISI/
 │   ├── components.json      # Component metadata
 │   └── AGENTS.md            # Lovable integration guide
 │
-└── INDEX.md                 # This file
-
+├── Documentation Files
+│   ├── INDEX.md             # This file
+│   ├── BACKEND_API.md       # Backend API documentation
+│   ├── QUICK_START.md       # Quick start guide
+│   ├── CONFIGURATION_GUIDE.md  # ⭐ Configuration & AI service guide (NEW)
+│
 ```
 
 ---
@@ -252,13 +274,58 @@ npm run format
 
 ---
 
+## ⚙️ Configuration & AI Service Refactor (NEW)
+
+The project has been refactored for maintainability and configuration management:
+
+### Key Components
+
+1. **Central Configuration** (`src/config/index.ts`)
+   - All configurable values (APIs, timeouts, thresholds, feature flags)
+   - No magic numbers in code
+   - Easily customizable without modifying business logic
+
+2. **AI Provider Abstraction** (`src/config/ai.ts` + `src/services/ai/`)
+   - Support for Gemini 2.5 Flash and OpenRouter
+   - Switch providers via environment variable only
+   - Unified provider interface
+
+3. **Prompt Management** (`src/config/prompts.ts`)
+   - Centralized prompt organization by category
+   - System, agent, extraction, classification, summarization, analysis, decision prompts
+   - No hardcoded prompts in components
+
+### Quick Setup
+
+```bash
+# 1. Copy environment template
+cp .env.example .env
+
+# 2. Fill in your API keys
+VITE_AI_PROVIDER=gemini
+GEMINI_API_KEY=your-key-here
+
+# 3. That's it! No code changes needed for configuration
+```
+
+### Customization
+
+After refactor, customize the entire app by editing ONLY:
+- `.env` - Environment-specific secrets
+- `src/config/index.ts` - Feature flags, thresholds, limits
+- `src/config/prompts.ts` - AI prompts and instructions
+
+**See [CONFIGURATION_GUIDE.md](CONFIGURATION_GUIDE.md) for detailed documentation**
+
 ## 🎯 Next Steps
 
-1. **Implement Backend Logic** - Fill in TODO sections in API routes
-2. **Add Data Layer** - Connect to databases/external services
-3. **Authentication** - Implement actual user auth (JWT, sessions, etc.)
-4. **Testing** - Add unit and integration tests
-5. **Deployment** - Configure Cloudflare Workers or other hosting
+1. **Set up environment** - Copy `.env.example` to `.env` and fill in API keys
+2. **Initialize AI provider** - Call `initializeAIProvider()` in your app startup
+3. **Implement backend logic** - Fill in TODO sections in API routes
+4. **Add data layer** - Connect to databases/external services
+5. **Add authentication** - Implement actual user auth (JWT, sessions, etc.)
+6. **Testing** - Add unit and integration tests
+7. **Deployment** - Configure Cloudflare Workers or other hosting
 
 ---
 
